@@ -14,7 +14,6 @@
     <header>
       <div class="logo">Hx</div>
       <h1 id="title">HeightX Expert</h1>
-      <button id="toggleLang">🌐 EN/ES</button>
     </header>
     <main>
       <label for="time" data-i18n="label_time">⏱ Time of Fall (s)</label>
@@ -40,7 +39,7 @@
       <button onclick="calculateHeight()" data-i18n="btn_calc">CALCULATE</button>
       <div id="result">Height: --</div>
       <div id="expertOutput" style="display:none;">Details: --</div>
-      <canvas id="chart" style="margin-top:1rem;"></canvas>
+      <canvas id="chart" width="400" height="200" style="margin-top:1rem;"></canvas>
       <button onclick="exportResults()" data-i18n="btn_export">📤 Export Results</button>
       <h2 data-i18n="label_history">📜 History</h2>
       <ul id="history"></ul>
