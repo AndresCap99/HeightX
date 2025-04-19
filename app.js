@@ -48,7 +48,7 @@ function calculateHeight() {
       expertOutput.style.display = "none";
       if (chart) chart.destroy();
     }
-    saveHistory(`📅 ${now} — ⏱ ${t}s | No Air | H: ${h.toFixed(2)} m`);
+    saveHistory(`📅 ${formatDate(now)} |⏱ ${t}s | No Air | ${h.toFixed(2)} m`);
     return;
   }
 
@@ -89,7 +89,7 @@ function calculateHeight() {
     if (chart) chart.destroy();
   }
 
-  saveHistory(`📅 ${now} — ⏱ ${t}s | 🌬️ Air | H: ${h.toFixed(2)} m`);
+  saveHistory(`📅 ${formatDate(now)} |⏱ ${t}s | Air | ${h.toFixed(2)} m`);
 }
 
 function renderChart(times, heights) {
@@ -150,7 +150,14 @@ function toggleHistory() {
   }
 }
 
+
+function formatDate(full) {
+  const date = new Date(full);
+  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} | ${date.toTimeString().split(" ")[0]}`;
+}
+
 function exportResults() {
+
   const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
   let text = history.map((item, i) => `${i + 1}. ${item}`).join("\n");
 
