@@ -10,11 +10,17 @@
 </head>
 <body>
   <div class="container">
-    <h1><img src="icon.png" alt="Hx" style="height: 40px; vertical-align: middle;"> HeightX</h1>
-    <label><input type="checkbox" id="air" /> Include Air Resistance</label><br />
-    <label><input type="checkbox" id="expertMode" /> Enable Expert Mode</label><br />
+    <h1><img src="icon.png" alt="Hx"> HeightX</h1>
+    
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="air"> Include Air Resistance</label>
+    </div>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="expertMode"> Enable Expert Mode</label>
+    </div>
+
     <input type="number" id="time" placeholder="Time of Fall (s)" />
-    <button onclick="calculateHeight()">CALCULATE</button>
+    <button id="calculateBtn" onclick="calculateHeight()">CALCULATE</button>
     <p id="output">Height: --</p>
 
     <div id="expertFeatures" style="display:none;">
