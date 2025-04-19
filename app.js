@@ -1,170 +1,121 @@
 
-document.getElementById("air").addEventListener("change", function () {
-  document.getElementById("extraInputs").style.display = this.checked ? "block" : "none";
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("#simple").innerHTML = `
+        <h2>Lanzamiento Simple</h2>
+        <p>Ingresa velocidad inicial para simular el lanzamiento.</p>
+        <input type="number" id="velocidadInicial" placeholder="Velocidad inicial (m/s)">
+        <button onclick="calcularAltura()">Calcular altura</button>
+        <div id="resultadoSimple"></div>
+    `;
+
+    document.querySelector("#comparar").innerHTML = `
+        <h2>Comparar Lanzamientos</h2>
+        <p>Compara dos lanzamientos diferentes con sus propios parámetros.</p>
+        <input type="number" id="vel1" placeholder="Velocidad 1 (m/s)">
+        <input type="number" id="vel2" placeholder="Velocidad 2 (m/s)">
+        <button onclick="compararLanzamientos()">Comparar</button>
+        <div id="resultadoComparacion"></div>
+    `;
+
+    document.querySelector("#gravedad").innerHTML = `
+        <h2>Gravedad Personalizada</h2>
+        <p>Ingresa un valor de gravedad para usar en los cálculos.</p>
+        <input type="number" id="gravedad" placeholder="Gravedad (m/s²)" step="0.01">
+        <button onclick="guardarGravedad()">Guardar gravedad</button>
+        <div id="resultadoGravedad"></div>
+    `;
+
+    document.querySelector("#forma").innerHTML = `
+        <h2>Forma del Objeto</h2>
+        <p>Selecciona la forma del objeto para afectar los cálculos.</p>
+        <select id="formaObjeto">
+            <option value="esfera">Esfera</option>
+            <option value="cubo">Cubo</option>
+            <option value="cilindro">Cilindro</option>
+        </select>
+        <button onclick="guardarForma()">Guardar forma</button>
+        <div id="resultadoForma"></div>
+    `;
+
+    document.querySelector("#inverso").innerHTML = `
+        <h2>Cálculo Inverso por Altura</h2>
+        <p>Ingresa la altura que quieres alcanzar y se calculará la velocidad necesaria.</p>
+        <input type="number" id="alturaDeseada" placeholder="Altura (m)">
+        <button onclick="calculoInverso()">Calcular velocidad</button>
+        <div id="resultadoInverso"></div>
+    `;
+
+    document.querySelector("#historial").innerHTML = `
+        <h2>Historial de Lanzamientos</h2>
+        <div id="listaHistorial"></div>
+    `;
+
+    cargarHistorial();
 });
-document.getElementById("expertMode").addEventListener("change", function () {
-  document.getElementById("expertInputs").style.display = this.checked ? "block" : "none";
-});
 
-let chart;
-let historyVisible = false;
+// Variables globales
+let gravedadPersonalizada = 9.81;
+let formaActual = "esfera";
 
-function calculateHeight() {
-  const t = parseFloat(document.getElementById("time").value);
-  const d = parseFloat(document.getElementById("diameter").value) / 2;
-  const m = parseFloat(document.getElementById("mass").value);
-  const Cd = parseFloat(document.getElementById("cd").value) || 0.47;
-  const useAir = document.getElementById("air").checked;
-  const expertMode = document.getElementById("expertMode").checked;
-  const g = 9.81;
-  const result = document.getElementById("result");
-  const expertOutput = document.getElementById("expertOutput");
-
-  if (isNaN(t) || t <= 0) {
-    result.textContent = "Enter a valid time.";
-    return;
-  }
-
-  let finalVelocity = 0;
-  let finalAcceleration = g;
-  let chartTimes = [];
-  let chartHeights = [];
-
-  const now = new Date();
-  const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} | ${now.toTimeString().split(" ")[0]}`;
-
-  if (!useAir) {
-    const h = 0.5 * g * t * t;
-    finalVelocity = g * t;
-    result.textContent = `Height: ${h.toFixed(2)} m`;
-    if (expertMode) {
-      expertOutput.style.display = "block";
-      expertOutput.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s | Final Acceleration: ${g.toFixed(2)} m/s²`;
-      for (let timeSim = 0; timeSim <= t; timeSim += 0.1) {
-        chartTimes.push(timeSim.toFixed(2));
-        chartHeights.push(0.5 * g * timeSim * timeSim);
-      }
-      renderChart(chartTimes, chartHeights);
-    } else {
-      expertOutput.style.display = "none";
-      if (chart) chart.destroy();
+// Funciones
+function calcularAltura() {
+    const v = parseFloat(document.getElementById("velocidadInicial").value);
+    const g = gravedadPersonalizada;
+    if (!isNaN(v)) {
+        const altura = (v * v) / (2 * g);
+        document.getElementById("resultadoSimple").innerText = `Altura máxima: ${altura.toFixed(2)} m`;
+        guardarEnHistorial("Simple", { v, altura });
     }
-    saveHistory(`${formattedDate} |⏱ ${t}s | No Air | ${h.toFixed(2)} m`);
-    return;
-  }
+}
 
-  if (isNaN(d) || isNaN(m) || d <= 0 || m <= 0) {
-    result.textContent = "Enter valid mass and diameter.";
-    return;
-  }
-
-  const rho = 1.225;
-  const A = Math.PI * d * d;
-  const dt = 0.01;
-  let v = 0, h = 0, timeSim = 0;
-
-  while (timeSim < t) {
-    const Fg = m * g;
-    const Fd = 0.5 * Cd * rho * A * v * v;
-    const Fnet = Fg - Fd;
-    const a = Fnet / m;
-    v += a * dt;
-    h += v * dt;
-    timeSim += dt;
-    finalAcceleration = a;
-
-    if (expertMode && timeSim % 0.1 < dt) {
-      chartTimes.push(timeSim.toFixed(2));
-      chartHeights.push(h);
+function compararLanzamientos() {
+    const v1 = parseFloat(document.getElementById("vel1").value);
+    const v2 = parseFloat(document.getElementById("vel2").value);
+    const g = gravedadPersonalizada;
+    if (!isNaN(v1) && !isNaN(v2)) {
+        const h1 = (v1 * v1) / (2 * g);
+        const h2 = (v2 * v2) / (2 * g);
+        document.getElementById("resultadoComparacion").innerText =
+            `Lanzamiento 1: ${h1.toFixed(2)} m | Lanzamiento 2: ${h2.toFixed(2)} m`;
+        guardarEnHistorial("Comparación", { v1, v2, h1, h2 });
     }
-  }
-
-  finalVelocity = v;
-  result.textContent = `Height (with air): ${h.toFixed(2)} m`;
-  if (expertMode) {
-    expertOutput.style.display = "block";
-    expertOutput.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s | Final Acceleration: ${finalAcceleration.toFixed(2)} m/s² | Cd: ${Cd}`;
-    renderChart(chartTimes, chartHeights);
-  } else {
-    expertOutput.style.display = "none";
-    if (chart) chart.destroy();
-  }
-
-  saveHistory(`${formattedDate} |⏱ ${t}s | Air | ${h.toFixed(2)} m`);
 }
 
-function renderChart(times, heights) {
-  const ctx = document.getElementById("chart").getContext("2d");
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: times,
-      datasets: [{
-        label: 'Height vs Time',
-        data: heights,
-        borderColor: 'rgba(139, 195, 74, 1)',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.2
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        x: { title: { display: true, text: 'Time (s)' } },
-        y: { title: { display: true, text: 'Height (m)' } }
-      }
+function guardarGravedad() {
+    const g = parseFloat(document.getElementById("gravedad").value);
+    if (!isNaN(g)) {
+        gravedadPersonalizada = g;
+        document.getElementById("resultadoGravedad").innerText = `Gravedad actual: ${g} m/s²`;
     }
-  });
 }
 
-function saveHistory(entry) {
-  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
-  history.unshift(entry);
-  localStorage.setItem("heightx_history", JSON.stringify(history));
-  if (historyVisible) renderHistory();
+function guardarForma() {
+    const forma = document.getElementById("formaObjeto").value;
+    formaActual = forma;
+    document.getElementById("resultadoForma").innerText = `Forma seleccionada: ${forma}`;
 }
 
-function renderHistory() {
-  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
-  const list = document.getElementById("history");
-  list.innerHTML = "";
-  history.forEach(item => {
-    const li = document.createElement("li");
-    li.textContent = item;
-    list.appendChild(li);
-  });
+function calculoInverso() {
+    const h = parseFloat(document.getElementById("alturaDeseada").value);
+    const g = gravedadPersonalizada;
+    if (!isNaN(h)) {
+        const velocidad = Math.sqrt(2 * g * h);
+        document.getElementById("resultadoInverso").innerText = `Velocidad necesaria: ${velocidad.toFixed(2)} m/s`;
+        guardarEnHistorial("Inverso", { h, velocidad });
+    }
 }
 
-
-function clearHistory() {
-  localStorage.removeItem("heightx_history");
-  renderHistory();
+function guardarEnHistorial(tipo, datos) {
+    const historial = JSON.parse(localStorage.getItem("historialHeightX") || "[]");
+    historial.push({ tipo, datos, fecha: new Date().toLocaleString() });
+    localStorage.setItem("historialHeightX", JSON.stringify(historial));
+    cargarHistorial();
 }
 
-function toggleHistory() {
-
-  const section = document.getElementById("historyContainer");
-  historyVisible = !historyVisible;
-  if (historyVisible) {
-    renderHistory();
-    section.style.display = "block";
-  } else {
-    section.style.display = "none";
-  }
-}
-
-function exportResults() {
-  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
-  let text = history.map((item, i) => `${i + 1}. ${item}`).join("\n");
-
-  const blob = new Blob([text], { type: "text/plain" });
-  const link = document.createElement("a");
-  link.href = window.URL.createObjectURL(blob);
-  link.download = "heightx_history.txt";
-  link.click();
+function cargarHistorial() {
+    const historial = JSON.parse(localStorage.getItem("historialHeightX") || "[]");
+    const lista = historial.map(item => 
+        `<div class='card'><b>${item.tipo}</b><br>${JSON.stringify(item.datos)}<br><small>${item.fecha}</small></div>`
+    ).join("");
+    document.getElementById("listaHistorial").innerHTML = lista || "<p>No hay lanzamientos registrados.</p>";
 }
