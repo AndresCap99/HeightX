@@ -1,15 +1,14 @@
-
 {
-  "name": "HeightX",
-  "short_name": "Hx",
-  "start_url": ".",
+  "name": "HeightX Expert",
+  "short_name": "HeightX",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "description": "Height calculator based on physics and air resistance",
+  "background_color": "#0f2027",
+  "theme_color": "#8bc34a",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "192x192",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]

@@ -1,53 +1,170 @@
 
-let gravedadPersonalizada = 9.81;
-let formaSeleccionada = "esfera";
-const coeficientesForma = { esfera: 0.47, cubo: 1.05, cilindro: 0.82 };
+document.getElementById("air").addEventListener("change", function () {
+  document.getElementById("extraInputs").style.display = this.checked ? "block" : "none";
+});
+document.getElementById("expertMode").addEventListener("change", function () {
+  document.getElementById("expertInputs").style.display = this.checked ? "block" : "none";
+});
+
+let chart;
+let historyVisible = false;
 
 function calculateHeight() {
   const t = parseFloat(document.getElementById("time").value);
-  const g = gravedadPersonalizada;
-  const h = 0.5 * g * t * t;
-  document.getElementById("output").innerText = `Height: ${h.toFixed(2)} m`;
-  guardarEnHistorial({ tipo: "Cálculo", datos: { tiempo: t, altura: h } });
+  const d = parseFloat(document.getElementById("diameter").value) / 2;
+  const m = parseFloat(document.getElementById("mass").value);
+  const Cd = parseFloat(document.getElementById("cd").value) || 0.47;
+  const useAir = document.getElementById("air").checked;
+  const expertMode = document.getElementById("expertMode").checked;
+  const g = 9.81;
+  const result = document.getElementById("result");
+  const expertOutput = document.getElementById("expertOutput");
+
+  if (isNaN(t) || t <= 0) {
+    result.textContent = "Enter a valid time.";
+    return;
+  }
+
+  let finalVelocity = 0;
+  let finalAcceleration = g;
+  let chartTimes = [];
+  let chartHeights = [];
+
+  const now = new Date();
+  const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} | ${now.toTimeString().split(" ")[0]}`;
+
+  if (!useAir) {
+    const h = 0.5 * g * t * t;
+    finalVelocity = g * t;
+    result.textContent = `Height: ${h.toFixed(2)} m`;
+    if (expertMode) {
+      expertOutput.style.display = "block";
+      expertOutput.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s | Final Acceleration: ${g.toFixed(2)} m/s²`;
+      for (let timeSim = 0; timeSim <= t; timeSim += 0.1) {
+        chartTimes.push(timeSim.toFixed(2));
+        chartHeights.push(0.5 * g * timeSim * timeSim);
+      }
+      renderChart(chartTimes, chartHeights);
+    } else {
+      expertOutput.style.display = "none";
+      if (chart) chart.destroy();
+    }
+    saveHistory(`${formattedDate} |⏱ ${t}s | No Air | ${h.toFixed(2)} m`);
+    return;
+  }
+
+  if (isNaN(d) || isNaN(m) || d <= 0 || m <= 0) {
+    result.textContent = "Enter valid mass and diameter.";
+    return;
+  }
+
+  const rho = 1.225;
+  const A = Math.PI * d * d;
+  const dt = 0.01;
+  let v = 0, h = 0, timeSim = 0;
+
+  while (timeSim < t) {
+    const Fg = m * g;
+    const Fd = 0.5 * Cd * rho * A * v * v;
+    const Fnet = Fg - Fd;
+    const a = Fnet / m;
+    v += a * dt;
+    h += v * dt;
+    timeSim += dt;
+    finalAcceleration = a;
+
+    if (expertMode && timeSim % 0.1 < dt) {
+      chartTimes.push(timeSim.toFixed(2));
+      chartHeights.push(h);
+    }
+  }
+
+  finalVelocity = v;
+  result.textContent = `Height (with air): ${h.toFixed(2)} m`;
+  if (expertMode) {
+    expertOutput.style.display = "block";
+    expertOutput.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s | Final Acceleration: ${finalAcceleration.toFixed(2)} m/s² | Cd: ${Cd}`;
+    renderChart(chartTimes, chartHeights);
+  } else {
+    expertOutput.style.display = "none";
+    if (chart) chart.destroy();
+  }
+
+  saveHistory(`${formattedDate} |⏱ ${t}s | Air | ${h.toFixed(2)} m`);
 }
 
-function comparar() {
-  const v1 = parseFloat(document.getElementById("vComp1").value);
-  const v2 = parseFloat(document.getElementById("vComp2").value);
-  const g = gravedadPersonalizada;
-  const h1 = (v1 * v1) / (2 * g);
-  const h2 = (v2 * v2) / (2 * g);
-  document.getElementById("outComp").innerText = `Altura 1: ${h1.toFixed(2)} m | Altura 2: ${h2.toFixed(2)} m`;
-  guardarEnHistorial({ tipo: "Comparación", datos: { v1, v2, h1, h2 } });
+function renderChart(times, heights) {
+  const ctx = document.getElementById("chart").getContext("2d");
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: times,
+      datasets: [{
+        label: 'Height vs Time',
+        data: heights,
+        borderColor: 'rgba(139, 195, 74, 1)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Time (s)' } },
+        y: { title: { display: true, text: 'Height (m)' } }
+      }
+    }
+  });
 }
 
-function aplicarGravedad() {
-  const g = parseFloat(document.getElementById("customG").value);
-  gravedadPersonalizada = g;
-  document.getElementById("outGrav").innerText = `Gravedad actual: ${g} m/s²`;
+function saveHistory(entry) {
+  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
+  history.unshift(entry);
+  localStorage.setItem("heightx_history", JSON.stringify(history));
+  if (historyVisible) renderHistory();
 }
 
-function setForma(forma) {
-  formaSeleccionada = forma;
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
+  const list = document.getElementById("history");
+  list.innerHTML = "";
+  history.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    list.appendChild(li);
+  });
 }
 
-function calcularInverso() {
-  const h = parseFloat(document.getElementById("hDeseada").value);
-  const v = Math.sqrt(2 * gravedadPersonalizada * h);
-  document.getElementById("outInverso").innerText = `Velocidad necesaria: ${v.toFixed(2)} m/s`;
-  guardarEnHistorial({ tipo: "Inverso", datos: { altura: h, velocidad: v } });
+
+function clearHistory() {
+  localStorage.removeItem("heightx_history");
+  renderHistory();
 }
 
-function guardarEnHistorial(item) {
-  const historial = JSON.parse(localStorage.getItem("heightx_historial") || "[]");
-  historial.push({ ...item, fecha: new Date().toLocaleString() });
-  localStorage.setItem("heightx_historial", JSON.stringify(historial));
+function toggleHistory() {
+
+  const section = document.getElementById("historyContainer");
+  historyVisible = !historyVisible;
+  if (historyVisible) {
+    renderHistory();
+    section.style.display = "block";
+  } else {
+    section.style.display = "none";
+  }
 }
 
-function mostrarHistorial() {
-  const historial = JSON.parse(localStorage.getItem("heightx_historial") || "[]").reverse();
-  const container = document.getElementById("historialCompleto");
-  container.innerHTML = historial.length
-    ? historial.map(item => `<div><b>${item.tipo}</b> - ${item.fecha}<br>${JSON.stringify(item.datos)}</div>`).join('<hr>')
-    : "<p>No hay historial todavía.</p>";
+function exportResults() {
+  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
+  let text = history.map((item, i) => `${i + 1}. ${item}`).join("\n");
+
+  const blob = new Blob([text], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  link.download = "heightx_history.txt";
+  link.click();
 }
