@@ -1,38 +1,38 @@
 
 <!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="stylesheet" href="style.css" />
-    <title>HeightX</title>
-  </head>
-  <body>
-    <div class="container">
-      <h1>📏 HeightX</h1>
-      <p>Calculadora de altura con o sin resistencia del aire</p>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <title>HeightX</title>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="logo">Hx</div>
+      <h1>HeightX</h1>
+    </header>
+    <main>
+      <label for="time">Time of Fall</label>
+      <input type="number" id="time" placeholder="7 seconds">
 
-      <label>⏱ Tiempo de caída (s):</label>
-      <input type="number" id="timeInput" placeholder="Ej: 3.5" />
-
-      <div class="checkbox">
-        <input type="checkbox" id="airResistanceToggle" />
-        <label for="airResistanceToggle">Usar resistencia del aire</label>
+      <div class="checkbox-container">
+        <input type="checkbox" id="air" />
+        <label for="air">Include air resistance</label>
       </div>
 
-      <div id="extraInputs" style="display: none;">
-        <label>⚪ Diámetro del objeto (m):</label>
-        <input type="number" id="diameterInput" placeholder="Ej: 0.6" />
-        <label>⚖️ Masa del objeto (kg):</label>
-        <input type="number" id="massInput" placeholder="Ej: 3" />
-      </div>
+      <label for="diameter">Diameter of object</label>
+      <input type="number" id="diameter" placeholder="0.6 m">
 
-      <button onclick="calculateHeight()">Calcular altura</button>
+      <label for="mass">Mass of object</label>
+      <input type="number" id="mass" placeholder="3 kg">
 
-      <p id="result"></p>
-    </div>
-
-    <script src="app.js"></script>
-  </body>
+      <button onclick="calculateHeight()">CALCULATE</button>
+      <div id="result">Height: --</div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
 </html>

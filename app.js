@@ -1,28 +1,25 @@
 
-document.getElementById("airResistanceToggle").addEventListener("change", function () {
-  document.getElementById("extraInputs").style.display = this.checked ? "block" : "none";
-});
-
 function calculateHeight() {
+  const t = parseFloat(document.getElementById("time").value);
+  const d = parseFloat(document.getElementById("diameter").value) / 2;
+  const m = parseFloat(document.getElementById("mass").value);
+  const useAir = document.getElementById("air").checked;
   const g = 9.81;
-  const t = parseFloat(document.getElementById("timeInput").value);
-  const useAir = document.getElementById("airResistanceToggle").checked;
+  let result = document.getElementById("result");
 
   if (isNaN(t) || t <= 0) {
-    document.getElementById("result").innerText = "⛔ Ingresa un tiempo válido.";
+    result.textContent = "Please enter a valid time.";
     return;
   }
 
   if (!useAir) {
     const h = 0.5 * g * t * t;
-    document.getElementById("result").innerText = `📐 Altura (sin resistencia): ${h.toFixed(2)} m`;
+    result.textContent = `Height: ${h.toFixed(2)} m`;
     return;
   }
 
-  const d = parseFloat(document.getElementById("diameterInput").value) / 2;
-  const m = parseFloat(document.getElementById("massInput").value);
   if (isNaN(d) || isNaN(m) || d <= 0 || m <= 0) {
-    document.getElementById("result").innerText = "⚠️ Ingresa masa y diámetro válidos.";
+    result.textContent = "Enter valid mass and diameter.";
     return;
   }
 
@@ -30,9 +27,7 @@ function calculateHeight() {
   const rho = 1.225;
   const A = Math.PI * d * d;
   const dt = 0.01;
-  let v = 0;
-  let h = 0;
-  let timeSim = 0;
+  let v = 0, h = 0, timeSim = 0;
 
   while (timeSim < t) {
     const Fg = m * g;
@@ -44,5 +39,5 @@ function calculateHeight() {
     timeSim += dt;
   }
 
-  document.getElementById("result").innerText = `🌬️ Altura (con aire): ${h.toFixed(2)} m`;
+  result.textContent = `Height: ${h.toFixed(2)} m`;
 }
