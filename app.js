@@ -1,9 +1,12 @@
+
 document.getElementById("air").addEventListener("change", function () {
   document.getElementById("extraInputs").style.display = this.checked ? "block" : "none";
 });
 document.getElementById("expertMode").addEventListener("change", function () {
   document.getElementById("expertInputs").style.display = this.checked ? "block" : "none";
 });
+
+let chart;  // Gráfico global
 
 function calculateHeight() {
   const t = parseFloat(document.getElementById("time").value);
@@ -23,6 +26,8 @@ function calculateHeight() {
 
   let finalVelocity = 0;
   let finalAcceleration = g;
+  let chartTimes = [];
+  let chartHeights = [];
 
   if (!useAir) {
     const h = 0.5 * g * t * t;
@@ -31,10 +36,15 @@ function calculateHeight() {
     if (expertMode) {
       expertOutput.style.display = "block";
       expertOutput.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s | Final Acceleration: ${g.toFixed(2)} m/s²`;
+      for (let timeSim = 0; timeSim <= t; timeSim += 0.1) {
+        chartTimes.push(timeSim.toFixed(2));
+        chartHeights.push(0.5 * g * timeSim * timeSim);
+      }
+      renderChart(chartTimes, chartHeights);
     } else {
       expertOutput.style.display = "none";
+      if (chart) chart.destroy();
     }
-    addToHistory(t, null, null, h, useAir, expertMode, finalVelocity, g, Cd);
     return;
   }
 
@@ -57,6 +67,11 @@ function calculateHeight() {
     h += v * dt;
     timeSim += dt;
     finalAcceleration = a;
+
+    if (expertMode && timeSim % 0.1 < dt) {
+      chartTimes.push(timeSim.toFixed(2));
+      chartHeights.push(h);
+    }
   }
 
   finalVelocity = v;
@@ -64,21 +79,40 @@ function calculateHeight() {
   if (expertMode) {
     expertOutput.style.display = "block";
     expertOutput.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s | Final Acceleration: ${finalAcceleration.toFixed(2)} m/s² | Cd: ${Cd}`;
+    renderChart(chartTimes, chartHeights);
   } else {
     expertOutput.style.display = "none";
+    if (chart) chart.destroy();
   }
-
-  addToHistory(t, d * 2, m, h, useAir, expertMode, finalVelocity, finalAcceleration, Cd);
 }
 
-function addToHistory(t, d, m, h, air, expert, v, a, Cd) {
-  const li = document.createElement("li");
-  li.textContent = `⏱ ${t}s | ${air ? "🌬️ Air" : "🆗 No Air"} | H: ${h.toFixed(2)} m` +
-    (expert ? ` | V: ${v.toFixed(2)} m/s | A: ${a.toFixed(2)} m/s² | Cd: ${Cd}` : "");
-  document.getElementById("history").prepend(li);
-  if (document.getElementById("history").children.length > 20) {
-    document.getElementById("history").removeChild(document.getElementById("history").lastChild);
-  }
+function renderChart(times, heights) {
+  const ctx = document.getElementById("chart").getContext("2d");
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: times,
+      datasets: [{
+        label: 'Height vs Time',
+        data: heights,
+        borderColor: 'rgba(139, 195, 74, 1)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Time (s)' } },
+        y: { title: { display: true, text: 'Height (m)' } }
+      }
+    }
+  });
 }
 
 function exportResults() {
