@@ -131,7 +131,7 @@ function saveHistory(entry) {
 
 function renderHistory() {
   const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
-  const list = document.getElementById("history");
+  const list = document.getElementById("historyContainer");
   list.innerHTML = "";
   history.forEach(item => {
     const li = document.createElement("li");
@@ -140,8 +140,14 @@ function renderHistory() {
   });
 }
 
+
+function clearHistory() {
+  localStorage.removeItem("heightx_history");
+  renderHistory();
+}
+
 function toggleHistory() {
-  const section = document.getElementById("history");
+  const section = document.getElementById("historyContainer");
   historyVisible = !historyVisible;
   if (historyVisible) {
     renderHistory();

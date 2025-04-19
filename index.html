@@ -41,8 +41,12 @@
       <div id="expertOutput" style="display:none;">Details: --</div>
       <canvas id="chart" width="400" height="200" style="margin-top:1rem;"></canvas>
       <button onclick="exportResults()" data-i18n="btn_export">📤 Export Results</button>
-      
-      <button onclick="toggleHistory()">📜 Ver historial</button><ul id="history" style="display:none;"></ul>
+      <h2 data-i18n="label_history">📜 History</h2>
+      <button onclick="toggleHistory()">📜 Ver historial</button>
+    <div id="historyContainer" style="display:none;">
+      <ul id="history"></ul>
+      <button onclick="clearHistory()" style="margin-top: 10px;">🗑️ Borrar historial</button>
+    </div>
     </main>
   </div>
   <script src="app.js"></script>
