@@ -2,20 +2,20 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom right, #eef2f3, #8bc34a);
+  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  color: #333;
 }
 .app-container {
-  background: #ffffff;
+  background: #1e2a38;
   border-radius: 16px;
   padding: 2rem;
   width: 90%;
   max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
 header {
   display: flex;
@@ -31,7 +31,7 @@ header {
   border-radius: 10px;
   font-size: 1.2rem;
 }
-h1 {
+h1, h2 {
   margin: 0;
 }
 h2 {
@@ -47,7 +47,7 @@ label {
 input[type='number'] {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 8px;
   font-size: 1rem;
 }
@@ -71,7 +71,7 @@ button {
 button:hover {
   background: #7cb342;
 }
-#result {
+#result, #extraResult {
   margin-top: 1rem;
   text-align: center;
   font-size: 1.25rem;
@@ -84,7 +84,7 @@ button:hover {
   padding: 0;
 }
 #history li {
-  background: #f5f5f5;
+  background: #2e3c4d;
   margin-bottom: 0.5rem;
   padding: 0.5rem;
   border-radius: 6px;

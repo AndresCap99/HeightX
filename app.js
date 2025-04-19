@@ -10,18 +10,27 @@ function calculateHeight() {
   const useAir = document.getElementById("air").checked;
   const expertMode = document.getElementById("expertMode").checked;
   const g = 9.81;
-  let result = document.getElementById("result");
+  const result = document.getElementById("result");
+  const extraResult = document.getElementById("extraResult");
 
   if (isNaN(t) || t <= 0) {
     result.textContent = "Enter a valid time.";
     return;
   }
 
+  let finalVelocity = 0;
+
   if (!useAir) {
     const h = 0.5 * g * t * t;
-    const msg = `Height: ${h.toFixed(2)} m`;
-    result.textContent = msg;
-    addToHistory(t, null, null, h, useAir, expertMode);
+    finalVelocity = g * t;
+    result.textContent = `Height: ${h.toFixed(2)} m`;
+    if (expertMode) {
+      extraResult.style.display = "block";
+      extraResult.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s`;
+    } else {
+      extraResult.style.display = "none";
+    }
+    addToHistory(t, null, null, h, useAir, expertMode, finalVelocity);
     return;
   }
 
@@ -46,14 +55,21 @@ function calculateHeight() {
     timeSim += dt;
   }
 
-  const msg = `Height (with air): ${h.toFixed(2)} m`;
-  result.textContent = msg;
-  addToHistory(t, d * 2, m, h, useAir, expertMode);
+  finalVelocity = v;
+  result.textContent = `Height (with air): ${h.toFixed(2)} m`;
+  if (expertMode) {
+    extraResult.style.display = "block";
+    extraResult.textContent = `Final Speed: ${finalVelocity.toFixed(2)} m/s`;
+  } else {
+    extraResult.style.display = "none";
+  }
+
+  addToHistory(t, d * 2, m, h, useAir, expertMode, finalVelocity);
 }
 
-function addToHistory(t, d, m, h, air, expert) {
+function addToHistory(t, d, m, h, air, expert, v) {
   const li = document.createElement("li");
-  li.textContent = `⏱ ${t}s | ${air ? "🌬️ Air" : "🆗 No Air"} | Height: ${h.toFixed(2)} m${expert ? " ⚙️" : ""}`;
+  li.textContent = `⏱ ${t}s | ${air ? "🌬️ Air" : "🆗 No Air"} | H: ${h.toFixed(2)} m` + (expert ? ` | V: ${v.toFixed(2)} m/s ⚙️` : "");
   document.getElementById("history").prepend(li);
   if (document.getElementById("history").children.length > 20) {
     document.getElementById("history").removeChild(document.getElementById("history").lastChild);

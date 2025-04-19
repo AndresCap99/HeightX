@@ -4,7 +4,7 @@
   "short_name": "HeightX",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#eef2f3",
+  "background_color": "#0f2027",
   "theme_color": "#8bc34a",
   "icons": [
     {

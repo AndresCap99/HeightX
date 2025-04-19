@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
   <title>HeightX Pro</title>
 </head>
 <body>
@@ -16,7 +16,7 @@
     </header>
     <main>
       <label for="time">⏱ Time of Fall</label>
-      <input type="number" id="time" placeholder="e.g. 3.5">
+      <input type="number" id="time" placeholder="e.g. 3.5" />
 
       <div class="checkbox-container">
         <input type="checkbox" id="air" />
@@ -25,10 +25,9 @@
 
       <div id="extraInputs" style="display: none;">
         <label for="diameter">⚪ Diameter (m)</label>
-        <input type="number" id="diameter" placeholder="e.g. 0.6">
-
+        <input type="number" id="diameter" placeholder="e.g. 0.6" />
         <label for="mass">⚖️ Mass (kg)</label>
-        <input type="number" id="mass" placeholder="e.g. 3">
+        <input type="number" id="mass" placeholder="e.g. 3" />
       </div>
 
       <div class="checkbox-container">
@@ -38,6 +37,7 @@
 
       <button onclick="calculateHeight()">CALCULATE</button>
       <div id="result">Height: --</div>
+      <div id="extraResult" style="display:none;">Final Speed: --</div>
 
       <button onclick="exportResults()">📤 Export Results</button>
 
