@@ -40,7 +40,54 @@
       <div id="result">Height: --</div>
       <div id="expertOutput" style="display:none;">Details: --</div>
       <canvas id="chart" width="400" height="200" style="margin-top:1rem;"></canvas>
-      <button onclick="exportResults()" data-i18n="btn_export">📤 Export Results</button>
+      
+<!-- FUNCIONES NUEVAS EN MODO EXPERTO DENTRO DEL PANEL IZQUIERDO -->
+<div id="expertFeatures" style="display:none;">
+  <hr>
+  <h3>Comparación de lanzamientos</h3>
+  <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)">
+  <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)">
+  <button onclick="
+    const r=compararLanzamientos(parseFloat(vComp1.value),parseFloat(vComp2.value));
+    outComp.innerText='Altura 1: '+r.h1.toFixed(2)+' m | Altura 2: '+r.h2.toFixed(2)+' m';
+  ">Comparar</button>
+  <p id="outComp"></p>
+
+  <h3>Gravedad personalizada</h3>
+  <input type="number" id="customG" placeholder="Gravedad (m/s²)">
+  <button onclick="
+    setGravedad(customG.value);
+    outGrav.innerText='Gravedad actual: '+customG.value+' m/s²';
+  ">Aplicar gravedad</button>
+  <p id="outGrav"></p>
+
+  <h3>Forma del objeto</h3>
+  <select onchange="setForma(this.value)">
+    <option value="esfera">Esfera</option>
+    <option value="cubo">Cubo</option>
+    <option value="cilindro">Cilindro</option>
+  </select>
+
+  <h3>Cálculo inverso por altura</h3>
+  <input type="number" id="hDeseada" placeholder="Altura (m)">
+  <button onclick="
+    const v=calcularVelocidadParaAltura(parseFloat(hDeseada.value));
+    outInverso.innerText='Velocidad necesaria: '+v.toFixed(2)+' m/s';
+  ">Calcular</button>
+  <p id="outInverso"></p>
+
+  <h3>Historial de lanzamientos</h3>
+  <button onclick="mostrarHistorialEnElemento('historialCompleto')">Ver historial</button>
+  <div id="historialCompleto"></div>
+</div>
+
+<script>
+  document.getElementById("expertMode").addEventListener("change", function () {
+    document.getElementById("expertFeatures").style.display = this.checked ? "block" : "none";
+  });
+</script>
+
+<button onclick="exportResults()" data-i18n="btn_export">📤 Export Results</button>
       
       <button onclick="toggleHistory()">📜 Ver historial</button>
     <div id="historyContainer" style="display:none;">
