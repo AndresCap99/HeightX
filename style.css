@@ -3,19 +3,42 @@ body {
   font-family: sans-serif;
   background: #0e1c2f;
   color: white;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
 }
+
 .container {
   max-width: 400px;
+  padding: 2rem;
 }
+
 input, select, button {
   width: 100%;
   margin: 8px 0;
   padding: 10px;
   font-size: 16px;
+  color: white;
+  background-color: #1c2a40;
+  border: 1px solid #555;
+  border-radius: 4px;
 }
+
+input::placeholder {
+  color: #ccc;
+}
+
 button {
   background-color: #8fda5a;
   border: none;
   cursor: pointer;
+  font-weight: bold;
+  color: #000;
+}
+
+h1 img {
+  height: 40px;
+  vertical-align: middle;
+  margin-right: 10px;
 }
