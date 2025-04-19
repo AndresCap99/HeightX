@@ -1,4 +1,9 @@
 
+document.getElementById("air").addEventListener("change", function () {
+  const extraInputs = document.getElementById("extraInputs");
+  extraInputs.style.display = this.checked ? "block" : "none";
+});
+
 function calculateHeight() {
   const t = parseFloat(document.getElementById("time").value);
   const d = parseFloat(document.getElementById("diameter").value) / 2;

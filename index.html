@@ -23,11 +23,13 @@
         <label for="air">Include air resistance</label>
       </div>
 
-      <label for="diameter">Diameter of object</label>
-      <input type="number" id="diameter" placeholder="0.6 m">
+      <div id="extraInputs" style="display: none;">
+        <label for="diameter">Diameter of object</label>
+        <input type="number" id="diameter" placeholder="0.6 m">
 
-      <label for="mass">Mass of object</label>
-      <input type="number" id="mass" placeholder="3 kg">
+        <label for="mass">Mass of object</label>
+        <input type="number" id="mass" placeholder="3 kg">
+      </div>
 
       <button onclick="calculateHeight()">CALCULATE</button>
       <div id="result">Height: --</div>
