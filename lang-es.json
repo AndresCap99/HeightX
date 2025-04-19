@@ -1,0 +1,12 @@
+{
+  "title": "HeightX Experto",
+  "label_time": "⏱ Tiempo de caída (s)",
+  "label_air": "Incluir resistencia del aire",
+  "label_diameter": "⚪ Diámetro (m)",
+  "label_mass": "⚖️ Masa (kg)",
+  "label_expert": "Activar modo experto",
+  "label_cd": "💨 Coeficiente de arrastre (Cd)",
+  "btn_calc": "CALCULAR",
+  "btn_export": "📤 Exportar resultados",
+  "label_history": "📜 Historial"
+}
