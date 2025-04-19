@@ -6,7 +6,8 @@ document.getElementById("expertMode").addEventListener("change", function () {
   document.getElementById("expertInputs").style.display = this.checked ? "block" : "none";
 });
 
-let chart;  // Gráfico global
+let chart;
+let historyVisible = false;
 
 function calculateHeight() {
   const t = parseFloat(document.getElementById("time").value);
@@ -29,6 +30,8 @@ function calculateHeight() {
   let chartTimes = [];
   let chartHeights = [];
 
+  let now = new Date().toLocaleString();
+
   if (!useAir) {
     const h = 0.5 * g * t * t;
     finalVelocity = g * t;
@@ -45,6 +48,7 @@ function calculateHeight() {
       expertOutput.style.display = "none";
       if (chart) chart.destroy();
     }
+    saveHistory(`📅 ${now} — ⏱ ${t}s | No Air | H: ${h.toFixed(2)} m`);
     return;
   }
 
@@ -84,6 +88,8 @@ function calculateHeight() {
     expertOutput.style.display = "none";
     if (chart) chart.destroy();
   }
+
+  saveHistory(`📅 ${now} — ⏱ ${t}s | 🌬️ Air | H: ${h.toFixed(2)} m`);
 }
 
 function renderChart(times, heights) {
@@ -115,12 +121,38 @@ function renderChart(times, heights) {
   });
 }
 
-function exportResults() {
-  let text = "";
-  const items = document.querySelectorAll("#history li");
-  items.forEach((item, i) => {
-    text += `${i + 1}. ${item.textContent}\n`;
+function saveHistory(entry) {
+  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
+  history.unshift(entry);
+  localStorage.setItem("heightx_history", JSON.stringify(history));
+  if (historyVisible) renderHistory();
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
+  const list = document.getElementById("history");
+  list.innerHTML = "";
+  history.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    list.appendChild(li);
   });
+}
+
+function toggleHistory() {
+  const section = document.getElementById("history");
+  historyVisible = !historyVisible;
+  if (historyVisible) {
+    renderHistory();
+    section.style.display = "block";
+  } else {
+    section.style.display = "none";
+  }
+}
+
+function exportResults() {
+  const history = JSON.parse(localStorage.getItem("heightx_history") || "[]");
+  let text = history.map((item, i) => `${i + 1}. ${item}`).join("\n");
 
   const blob = new Blob([text], { type: "text/plain" });
   const link = document.createElement("a");
