@@ -9,13 +9,30 @@
     <title>HeightX</title>
   </head>
   <body>
-    <div id="app">
-      <h1>HeightX</h1>
-      <p>Calculadora de altura en caída libre</p>
-      <label>Tiempo de caída (s): <input type="number" id="timeInput" /></label>
+    <div class="container">
+      <h1>📏 HeightX</h1>
+      <p>Calculadora de altura con o sin resistencia del aire</p>
+
+      <label>⏱ Tiempo de caída (s):</label>
+      <input type="number" id="timeInput" placeholder="Ej: 3.5" />
+
+      <div class="checkbox">
+        <input type="checkbox" id="airResistanceToggle" />
+        <label for="airResistanceToggle">Usar resistencia del aire</label>
+      </div>
+
+      <div id="extraInputs" style="display: none;">
+        <label>⚪ Diámetro del objeto (m):</label>
+        <input type="number" id="diameterInput" placeholder="Ej: 0.6" />
+        <label>⚖️ Masa del objeto (kg):</label>
+        <input type="number" id="massInput" placeholder="Ej: 3" />
+      </div>
+
       <button onclick="calculateHeight()">Calcular altura</button>
+
       <p id="result"></p>
     </div>
+
     <script src="app.js"></script>
   </body>
 </html>

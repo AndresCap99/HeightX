@@ -1,7 +1,7 @@
 
 self.addEventListener("install", e => {
   e.waitUntil(
-    caches.open("heightx-cache").then(cache => {
+    caches.open("heightx-enhanced").then(cache => {
       return cache.addAll(["./", "index.html", "app.js", "style.css", "manifest.json"]);
     })
   );
