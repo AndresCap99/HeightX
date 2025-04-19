@@ -1,7 +1,6 @@
 
 document.getElementById("air").addEventListener("change", function () {
-  const extraInputs = document.getElementById("extraInputs");
-  extraInputs.style.display = this.checked ? "block" : "none";
+  document.getElementById("extraInputs").style.display = this.checked ? "block" : "none";
 });
 
 function calculateHeight() {
@@ -9,17 +8,20 @@ function calculateHeight() {
   const d = parseFloat(document.getElementById("diameter").value) / 2;
   const m = parseFloat(document.getElementById("mass").value);
   const useAir = document.getElementById("air").checked;
+  const expertMode = document.getElementById("expertMode").checked;
   const g = 9.81;
   let result = document.getElementById("result");
 
   if (isNaN(t) || t <= 0) {
-    result.textContent = "Please enter a valid time.";
+    result.textContent = "Enter a valid time.";
     return;
   }
 
   if (!useAir) {
     const h = 0.5 * g * t * t;
-    result.textContent = `Height: ${h.toFixed(2)} m`;
+    const msg = `Height: ${h.toFixed(2)} m`;
+    result.textContent = msg;
+    addToHistory(t, null, null, h, useAir, expertMode);
     return;
   }
 
@@ -44,5 +46,30 @@ function calculateHeight() {
     timeSim += dt;
   }
 
-  result.textContent = `Height: ${h.toFixed(2)} m`;
+  const msg = `Height (with air): ${h.toFixed(2)} m`;
+  result.textContent = msg;
+  addToHistory(t, d * 2, m, h, useAir, expertMode);
+}
+
+function addToHistory(t, d, m, h, air, expert) {
+  const li = document.createElement("li");
+  li.textContent = `⏱ ${t}s | ${air ? "🌬️ Air" : "🆗 No Air"} | Height: ${h.toFixed(2)} m${expert ? " ⚙️" : ""}`;
+  document.getElementById("history").prepend(li);
+  if (document.getElementById("history").children.length > 20) {
+    document.getElementById("history").removeChild(document.getElementById("history").lastChild);
+  }
+}
+
+function exportResults() {
+  let text = "";
+  const items = document.querySelectorAll("#history li");
+  items.forEach((item, i) => {
+    text += `${i + 1}. ${item.textContent}\n`;
+  });
+
+  const blob = new Blob([text], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  link.download = "heightx_history.txt";
+  link.click();
 }
