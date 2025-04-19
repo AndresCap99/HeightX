@@ -50,5 +50,63 @@
     </main>
   </div>
   <script src="app.js"></script>
+
+<!-- NUEVAS FUNCIONES INTEGRADAS -->
+
+<hr>
+<section>
+  <h2>Comparación de lanzamientos</h2>
+  <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)">
+  <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)">
+  <button onclick="
+    const v1 = parseFloat(document.getElementById('vComp1').value);
+    const v2 = parseFloat(document.getElementById('vComp2').value);
+    const res = compararLanzamientos(v1, v2);
+    document.getElementById('outComp').innerText = 'Altura 1: ' + res.h1.toFixed(2) + ' m | Altura 2: ' + res.h2.toFixed(2) + ' m';
+  ">Comparar</button>
+  <p id="outComp"></p>
+</section>
+
+<hr>
+<section>
+  <h2>Gravedad personalizada</h2>
+  <input type="number" id="customG" placeholder="Gravedad (m/s²)">
+  <button onclick="
+    const g = document.getElementById('customG').value;
+    setGravedad(g);
+    document.getElementById('outGrav').innerText = 'Gravedad actual: ' + g + ' m/s²';
+  ">Aplicar gravedad</button>
+  <p id="outGrav"></p>
+</section>
+
+<hr>
+<section>
+  <h2>Forma del objeto</h2>
+  <select onchange="setForma(this.value)">
+    <option value="esfera">Esfera</option>
+    <option value="cubo">Cubo</option>
+    <option value="cilindro">Cilindro</option>
+  </select>
+</section>
+
+<hr>
+<section>
+  <h2>Cálculo inverso por altura</h2>
+  <input type="number" id="hDeseada" placeholder="Altura (m)">
+  <button onclick="
+    const h = parseFloat(document.getElementById('hDeseada').value);
+    const v = calcularVelocidadParaAltura(h);
+    document.getElementById('outInverso').innerText = 'Velocidad necesaria: ' + v.toFixed(2) + ' m/s';
+  ">Calcular velocidad</button>
+  <p id="outInverso"></p>
+</section>
+
+<hr>
+<section>
+  <h2>Historial avanzado</h2>
+  <button onclick="mostrarHistorialEnElemento('historialCompleto')">Mostrar historial</button>
+  <div id="historialCompleto"></div>
+</section>
+
 </body>
 </html>
