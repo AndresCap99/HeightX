@@ -5,10 +5,10 @@
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
-  "description": "Height calculator based on free fall and air resistance",
+  "description": "Height calculator based on physics and air resistance",
   "icons": [
     {
-      "src": "hx-icon.png",
+      "src": "icon.png",
       "sizes": "192x192",
       "type": "image/png"
     }

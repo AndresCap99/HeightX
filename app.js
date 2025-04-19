@@ -11,23 +11,31 @@ function calculateHeight() {
   guardarEnHistorial({ tipo: "Cálculo", datos: { tiempo: t, altura: h } });
 }
 
-function compararLanzamientos(v1, v2) {
+function comparar() {
+  const v1 = parseFloat(document.getElementById("vComp1").value);
+  const v2 = parseFloat(document.getElementById("vComp2").value);
   const g = gravedadPersonalizada;
-  return { h1: (v1 * v1) / (2 * g), h2: (v2 * v2) / (2 * g) };
+  const h1 = (v1 * v1) / (2 * g);
+  const h2 = (v2 * v2) / (2 * g);
+  document.getElementById("outComp").innerText = `Altura 1: ${h1.toFixed(2)} m | Altura 2: ${h2.toFixed(2)} m`;
+  guardarEnHistorial({ tipo: "Comparación", datos: { v1, v2, h1, h2 } });
 }
 
-function setGravedad(valor) {
-  gravedadPersonalizada = parseFloat(valor);
+function aplicarGravedad() {
+  const g = parseFloat(document.getElementById("customG").value);
+  gravedadPersonalizada = g;
+  document.getElementById("outGrav").innerText = `Gravedad actual: ${g} m/s²`;
 }
 
 function setForma(forma) {
   formaSeleccionada = forma;
-  const cd = coeficientesForma[forma] || 0.47;
-  document.getElementById("cd")?.value = cd;
 }
 
-function calcularVelocidadParaAltura(h) {
-  return Math.sqrt(2 * gravedadPersonalizada * h);
+function calcularInverso() {
+  const h = parseFloat(document.getElementById("hDeseada").value);
+  const v = Math.sqrt(2 * gravedadPersonalizada * h);
+  document.getElementById("outInverso").innerText = `Velocidad necesaria: ${v.toFixed(2)} m/s`;
+  guardarEnHistorial({ tipo: "Inverso", datos: { altura: h, velocidad: v } });
 }
 
 function guardarEnHistorial(item) {
@@ -36,14 +44,10 @@ function guardarEnHistorial(item) {
   localStorage.setItem("heightx_historial", JSON.stringify(historial));
 }
 
-function obtenerHistorial() {
-  return JSON.parse(localStorage.getItem("heightx_historial") || "[]");
-}
-
-function mostrarHistorialEnElemento(idElemento) {
-  const historial = obtenerHistorial();
-  const contenedor = document.getElementById(idElemento);
-  contenedor.innerHTML = historial.reverse().map(item => 
-    `<div><b>${item.tipo}</b> – ${item.fecha}<br>${JSON.stringify(item.datos)}</div>`
-  ).join('') || "<p>No hay historial aún.</p>";
+function mostrarHistorial() {
+  const historial = JSON.parse(localStorage.getItem("heightx_historial") || "[]").reverse();
+  const container = document.getElementById("historialCompleto");
+  container.innerHTML = historial.length
+    ? historial.map(item => `<div><b>${item.tipo}</b> - ${item.fecha}<br>${JSON.stringify(item.datos)}</div>`).join('<hr>')
+    : "<p>No hay historial todavía.</p>";
 }

@@ -3,54 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="hx-icon.png" />
+  <link rel="icon" href="icon.png" />
   <link rel="manifest" href="manifest.json" />
   <title>HeightX</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1><img src="hx-icon.png" alt="Hx"> HeightX</h1>
-    
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="air"> Include Air Resistance</label>
-    </div>
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="expertMode"> Enable Expert Mode</label>
-    </div>
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="logo">
+        <img src="icon.png" alt="Hx Icon" />
+        <h1>HeightX</h1>
+      </div>
 
-    <input type="number" id="time" placeholder="Time of Fall (s)" />
-    <button id="calculateBtn" onclick="calculateHeight()">CALCULATE</button>
-    <p id="output">Height: --</p>
+      <div class="card">
+        <label><input type="checkbox" id="air"> Include Air Resistance</label>
+        <label><input type="checkbox" id="expertMode"> Enable Expert Mode</label>
+        <input type="number" id="time" placeholder="Time of Fall (s)" />
+        <button onclick="calculateHeight()">CALCULATE</button>
+        <p id="output">Height: --</p>
+      </div>
 
-    <div id="expertFeatures" style="display:none;">
-      <hr />
-      <h3>Comparación de lanzamientos</h3>
-      <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)">
-      <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)">
-      <button onclick="const r=compararLanzamientos(parseFloat(vComp1.value),parseFloat(vComp2.value)); outComp.innerText='Altura 1: '+r.h1.toFixed(2)+' m | Altura 2: '+r.h2.toFixed(2)+' m';">Comparar</button>
-      <p id="outComp"></p>
+      <div id="expertFeatures" style="display: none;">
+        <div class="card">
+          <h2>Comparación de lanzamientos</h2>
+          <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)" />
+          <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)" />
+          <button onclick="comparar()">Comparar</button>
+          <p id="outComp"></p>
+        </div>
 
-      <h3>Gravedad personalizada</h3>
-      <input type="number" id="customG" placeholder="Gravedad (m/s²)">
-      <button onclick="setGravedad(customG.value); outGrav.innerText='Gravedad actual: '+customG.value+' m/s²';">Aplicar gravedad</button>
-      <p id="outGrav"></p>
+        <div class="card">
+          <h2>Gravedad personalizada</h2>
+          <input type="number" id="customG" placeholder="Gravedad (m/s²)" />
+          <button onclick="aplicarGravedad()">Aplicar gravedad</button>
+          <p id="outGrav"></p>
+        </div>
 
-      <h3>Forma del objeto</h3>
-      <select onchange="setForma(this.value)">
-        <option value="esfera">Esfera</option>
-        <option value="cubo">Cubo</option>
-        <option value="cilindro">Cilindro</option>
-      </select>
+        <div class="card">
+          <h2>Forma del objeto</h2>
+          <select onchange="setForma(this.value)">
+            <option value="esfera">Esfera</option>
+            <option value="cubo">Cubo</option>
+            <option value="cilindro">Cilindro</option>
+          </select>
+        </div>
 
-      <h3>Cálculo inverso por altura</h3>
-      <input type="number" id="hDeseada" placeholder="Altura (m)">
-      <button onclick="const v=calcularVelocidadParaAltura(parseFloat(hDeseada.value)); outInverso.innerText='Velocidad necesaria: '+v.toFixed(2)+' m/s';">Calcular</button>
-      <p id="outInverso"></p>
+        <div class="card">
+          <h2>Cálculo inverso por altura</h2>
+          <input type="number" id="hDeseada" placeholder="Altura (m)" />
+          <button onclick="calcularInverso()">Calcular velocidad</button>
+          <p id="outInverso"></p>
+        </div>
 
-      <h3>Historial de lanzamientos</h3>
-      <button onclick="mostrarHistorialEnElemento('historialCompleto')">Ver historial</button>
-      <div id="historialCompleto"></div>
+        <div class="card">
+          <h2>Historial de lanzamientos</h2>
+          <button onclick="mostrarHistorial()">Ver historial</button>
+          <div id="historialCompleto"></div>
+        </div>
+      </div>
     </div>
   </div>
 
