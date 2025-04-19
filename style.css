@@ -1,86 +1,21 @@
+
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  font-family: sans-serif;
+  background: #0e1c2f;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-.app-container {
-  background: #1e2a38;
-  border-radius: 16px;
   padding: 2rem;
-  width: 90%;
-  max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+.container {
+  max-width: 400px;
 }
-.logo {
-  background: #8bc34a;
-  color: white;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  font-size: 1.2rem;
-}
-h1, h2 { margin: 0; }
-h2 {
-  margin-top: 2rem;
-  font-size: 1rem;
-}
-label {
-  display: block;
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
-  font-size: 0.9rem;
-}
-input[type='number'] {
+input, select, button {
   width: 100%;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-.checkbox-container {
-  margin: 1rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  margin: 8px 0;
+  padding: 10px;
+  font-size: 16px;
 }
 button {
-  width: 100%;
-  background: #8bc34a;
-  color: white;
-  padding: 1rem;
-  font-size: 1rem;
+  background-color: #8fda5a;
   border: none;
-  border-radius: 8px;
-  margin-top: 1rem;
   cursor: pointer;
-}
-button:hover { background: #7cb342; }
-#result, #expertOutput {
-  margin-top: 1rem;
-  text-align: center;
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-#history {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  list-style: none;
-  padding: 0;
-}
-#history li {
-  background: #2e3c4d;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 6px;
 }

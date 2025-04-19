@@ -1,201 +1,58 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="icon.png" />
   <link rel="manifest" href="manifest.json" />
+  <title>HeightX</title>
   <link rel="stylesheet" href="style.css" />
-  <title>HeightX Expert</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="app-container">
-    <header>
-      <div class="logo">Hx</div>
-      <h1 id="title">HeightX</h1>
-    </header>
-    <main>
-      <label for="time" data-i18n="label_time">⏱ Time of Fall (s)</label>
-      <input type="number" id="time" placeholder="e.g. 3.5" />
-      <div class="checkbox-container">
-        <input type="checkbox" id="air" />
-        <label for="air" data-i18n="label_air">Include Air Resistance</label>
-      </div>
-      <div id="extraInputs" style="display: none;">
-        <label for="diameter" data-i18n="label_diameter">⚪ Diameter (m)</label>
-        <input type="number" id="diameter" placeholder="e.g. 0.6" />
-        <label for="mass" data-i18n="label_mass">⚖️ Mass (kg)</label>
-        <input type="number" id="mass" placeholder="e.g. 3" />
-      </div>
-      <div class="checkbox-container">
-        <input type="checkbox" id="expertMode" />
-        <label for="expertMode" data-i18n="label_expert">Enable Expert Mode</label>
-      </div>
-      <div id="expertInputs" style="display: none;">
-        <label for="cd" data-i18n="label_cd">💨 Drag Coefficient (Cd)</label>
-        <input type="number" id="cd" placeholder="e.g. 0.47 (sphere)" step="0.01" />
-      </div>
-      <button onclick="calculateHeight()" data-i18n="btn_calc">CALCULATE</button>
-      <div id="result">Height: --</div>
-      <div id="expertOutput" style="display:none;">Details: --</div>
-      <canvas id="chart" width="400" height="200" style="margin-top:1rem;"></canvas>
-      
-<!-- FUNCIONES NUEVAS EN MODO EXPERTO DENTRO DEL PANEL IZQUIERDO -->
-<div id="expertFeatures" style="display:none;">
-  <hr>
-  <h3>Comparación de lanzamientos</h3>
-  <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)">
-  <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)">
-  <button onclick="
-    const r=compararLanzamientos(parseFloat(vComp1.value),parseFloat(vComp2.value));
-    outComp.innerText='Altura 1: '+r.h1.toFixed(2)+' m | Altura 2: '+r.h2.toFixed(2)+' m';
-  ">Comparar</button>
-  <p id="outComp"></p>
+  <div class="container">
+    <h1><img src="icon.png" alt="Hx" style="height: 40px; vertical-align: middle;"> HeightX</h1>
+    <label><input type="checkbox" id="air" /> Include Air Resistance</label><br />
+    <label><input type="checkbox" id="expertMode" /> Enable Expert Mode</label><br />
+    <input type="number" id="time" placeholder="Time of Fall (s)" />
+    <button onclick="calculateHeight()">CALCULATE</button>
+    <p id="output">Height: --</p>
 
-  <h3>Gravedad personalizada</h3>
-  <input type="number" id="customG" placeholder="Gravedad (m/s²)">
-  <button onclick="
-    setGravedad(customG.value);
-    outGrav.innerText='Gravedad actual: '+customG.value+' m/s²';
-  ">Aplicar gravedad</button>
-  <p id="outGrav"></p>
+    <div id="expertFeatures" style="display:none;">
+      <hr />
+      <h3>Comparación de lanzamientos</h3>
+      <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)">
+      <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)">
+      <button onclick="const r=compararLanzamientos(parseFloat(vComp1.value),parseFloat(vComp2.value)); outComp.innerText='Altura 1: '+r.h1.toFixed(2)+' m | Altura 2: '+r.h2.toFixed(2)+' m';">Comparar</button>
+      <p id="outComp"></p>
 
-  <h3>Forma del objeto</h3>
-  <select onchange="setForma(this.value)">
-    <option value="esfera">Esfera</option>
-    <option value="cubo">Cubo</option>
-    <option value="cilindro">Cilindro</option>
-  </select>
+      <h3>Gravedad personalizada</h3>
+      <input type="number" id="customG" placeholder="Gravedad (m/s²)">
+      <button onclick="setGravedad(customG.value); outGrav.innerText='Gravedad actual: '+customG.value+' m/s²';">Aplicar gravedad</button>
+      <p id="outGrav"></p>
 
-  <h3>Cálculo inverso por altura</h3>
-  <input type="number" id="hDeseada" placeholder="Altura (m)">
-  <button onclick="
-    const v=calcularVelocidadParaAltura(parseFloat(hDeseada.value));
-    outInverso.innerText='Velocidad necesaria: '+v.toFixed(2)+' m/s';
-  ">Calcular</button>
-  <p id="outInverso"></p>
+      <h3>Forma del objeto</h3>
+      <select onchange="setForma(this.value)">
+        <option value="esfera">Esfera</option>
+        <option value="cubo">Cubo</option>
+        <option value="cilindro">Cilindro</option>
+      </select>
 
-  <h3>Historial de lanzamientos</h3>
-  <button onclick="mostrarHistorialEnElemento('historialCompleto')">Ver historial</button>
-  <div id="historialCompleto"></div>
-</div>
+      <h3>Cálculo inverso por altura</h3>
+      <input type="number" id="hDeseada" placeholder="Altura (m)">
+      <button onclick="const v=calcularVelocidadParaAltura(parseFloat(hDeseada.value)); outInverso.innerText='Velocidad necesaria: '+v.toFixed(2)+' m/s';">Calcular</button>
+      <p id="outInverso"></p>
 
-<script>
-  document.getElementById("expertMode").addEventListener("change", function () {
-    document.getElementById("expertFeatures").style.display = this.checked ? "block" : "none";
-  });
-</script>
-
-<button onclick="exportResults()" data-i18n="btn_export">📤 Export Results</button>
-      
-      <button onclick="toggleHistory()">📜 Ver historial</button>
-    <div id="historyContainer" style="display:none;">
-      <ul id="history"></ul>
-      <button onclick="clearHistory()" style="margin-top: 10px;">🗑️ Borrar historial</button>
+      <h3>Historial de lanzamientos</h3>
+      <button onclick="mostrarHistorialEnElemento('historialCompleto')">Ver historial</button>
+      <div id="historialCompleto"></div>
     </div>
-    </main>
   </div>
+
   <script src="app.js"></script>
-
-<!-- NUEVAS FUNCIONES INTEGRADAS -->
-
-<hr>
-<section>
-  <h2>Comparación de lanzamientos</h2>
-  <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)">
-  <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)">
-  <button onclick="
-    const v1 = parseFloat(document.getElementById('vComp1').value);
-    const v2 = parseFloat(document.getElementById('vComp2').value);
-    const res = compararLanzamientos(v1, v2);
-    document.getElementById('outComp').innerText = 'Altura 1: ' + res.h1.toFixed(2) + ' m | Altura 2: ' + res.h2.toFixed(2) + ' m';
-  ">Comparar</button>
-  <p id="outComp"></p>
-</section>
-
-<hr>
-<section>
-  <h2>Gravedad personalizada</h2>
-  <input type="number" id="customG" placeholder="Gravedad (m/s²)">
-  <button onclick="
-    const g = document.getElementById('customG').value;
-    setGravedad(g);
-    document.getElementById('outGrav').innerText = 'Gravedad actual: ' + g + ' m/s²';
-  ">Aplicar gravedad</button>
-  <p id="outGrav"></p>
-</section>
-
-<hr>
-<section>
-  <h2>Forma del objeto</h2>
-  <select onchange="setForma(this.value)">
-    <option value="esfera">Esfera</option>
-    <option value="cubo">Cubo</option>
-    <option value="cilindro">Cilindro</option>
-  </select>
-</section>
-
-<hr>
-<section>
-  <h2>Cálculo inverso por altura</h2>
-  <input type="number" id="hDeseada" placeholder="Altura (m)">
-  <button onclick="
-    const h = parseFloat(document.getElementById('hDeseada').value);
-    const v = calcularVelocidadParaAltura(h);
-    document.getElementById('outInverso').innerText = 'Velocidad necesaria: ' + v.toFixed(2) + ' m/s';
-  ">Calcular velocidad</button>
-  <p id="outInverso"></p>
-</section>
-
-<hr>
-<section>
-  <h2>Historial avanzado</h2>
-  <button onclick="mostrarHistorialEnElemento('historialCompleto')">Mostrar historial</button>
-  <div id="historialCompleto"></div>
-</section>
-
-
-<!-- FUNCIONALIDADES NUEVAS EN MODO EXPERTO -->
-<div id="expertFeatures" style="display:none; margin-top: 20px;">
-  <hr>
-  <h3>Comparación de lanzamientos</h3>
-  <input type="number" id="vComp1" placeholder="Velocidad 1 (m/s)">
-  <input type="number" id="vComp2" placeholder="Velocidad 2 (m/s)">
-  <button onclick="const r=compararLanzamientos(parseFloat(vComp1.value),parseFloat(vComp2.value)); outComp.innerText='Altura 1: '+r.h1.toFixed(2)+' m | Altura 2: '+r.h2.toFixed(2)+' m';">Comparar</button>
-  <p id="outComp"></p>
-
-  <hr>
-  <h3>Gravedad personalizada</h3>
-  <input type="number" id="customG" placeholder="Gravedad (m/s²)">
-  <button onclick="setGravedad(customG.value); outGrav.innerText='Gravedad actual: '+customG.value+' m/s²';">Aplicar gravedad</button>
-  <p id="outGrav"></p>
-
-  <hr>
-  <h3>Forma del objeto</h3>
-  <select onchange="setForma(this.value)">
-    <option value="esfera">Esfera</option>
-    <option value="cubo">Cubo</option>
-    <option value="cilindro">Cilindro</option>
-  </select>
-
-  <hr>
-  <h3>Cálculo inverso por altura</h3>
-  <input type="number" id="hDeseada" placeholder="Altura (m)">
-  <button onclick="const v=calcularVelocidadParaAltura(parseFloat(hDeseada.value)); outInverso.innerText='Velocidad necesaria: '+v.toFixed(2)+' m/s';">Calcular</button>
-  <p id="outInverso"></p>
-
-  <hr>
-  <h3>Historial de lanzamientos</h3>
-  <button onclick="mostrarHistorialEnElemento('historialCompleto')">Ver historial</button>
-  <div id="historialCompleto"></div>
-</div>
-
-<script>
-  document.getElementById("expertMode").addEventListener("change", function () {
-    document.getElementById("expertFeatures").style.display = this.checked ? "block" : "none";
-  });
-</script>
-
+  <script>
+    document.getElementById("expertMode").addEventListener("change", function () {
+      document.getElementById("expertFeatures").style.display = this.checked ? "block" : "none";
+    });
+  </script>
 </body>
 </html>
